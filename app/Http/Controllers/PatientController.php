@@ -20,8 +20,15 @@ class PatientController extends Controller
     public function getSections(Request $request)
     {
         $decrypted = Crypt::decrypt($request->get('patient_id'));
+
+        if(!Patient::find($decrypted)->survey_available){
+            return response()->json([1,1,1], 201);
+        }
+
+        $actualSurvey=Result::where('patient_id',$decrypted)->max('survey');
+
         $status= [];
-        $pagesNumber= Result::where('patient_id',$decrypted)->paginate($this->paginadoItems)->lastPage();
+        $pagesNumber= Result::where('patient_id',$decrypted)->where('survey', $actualSurvey)->paginate($this->paginadoItems)->lastPage();
 
         for ($i=1; $i<=$pagesNumber; $i++){
             $currentPage= $i;
@@ -29,7 +36,7 @@ class PatientController extends Controller
                 return $currentPage;
             });
 
-            $sizeofPaginate= sizeof(Result::where('patient_id',$decrypted)->paginate($this->paginadoItems)->WhereNull('answer'));
+            $sizeofPaginate= sizeof(Result::where('patient_id',$decrypted)->where('survey', $actualSurvey)->paginate($this->paginadoItems)->WhereNull('answer'));
             if($sizeofPaginate == 0){ // Si el $sizeofPaginate es igual a 0, significa que en la seccion analizada no hay ningun null, la unica forma que pase eso, es que el paciente ya haya contestado todas las preguntas
                 // Retornar un 1 Significa que este Section no tiene ningun null
                 // 1 significa que todas las preguntas estan contestadas
@@ -39,7 +46,35 @@ class PatientController extends Controller
                 array_push($status,0);
             }
         }
+
+        if(array_sum($status)==sizeof($status)){
+            return response()->json([1,1,1], 201);
+        }
+
         return $status;
+
+
+//        $decrypted = Crypt::decrypt($request->get('patient_id'));
+//        $status= [];
+//        $pagesNumber= Result::where('patient_id',$decrypted)->paginate($this->paginadoItems)->lastPage();
+//
+//        for ($i=1; $i<=$pagesNumber; $i++){
+//            $currentPage= $i;
+//            Paginator::currentPageResolver(function () use ($currentPage) {
+//                return $currentPage;
+//            });
+//
+//            $sizeofPaginate= sizeof(Result::where('patient_id',$decrypted)->paginate($this->paginadoItems)->WhereNull('answer'));
+//            if($sizeofPaginate == 0){ // Si el $sizeofPaginate es igual a 0, significa que en la seccion analizada no hay ningun null, la unica forma que pase eso, es que el paciente ya haya contestado todas las preguntas
+//                // Retornar un 1 Significa que este Section no tiene ningun null
+//                // 1 significa que todas las preguntas estan contestadas
+//                array_push($status,1);
+//            }else{
+//                // 0 significa que esta seccion tiene null
+//                array_push($status,0);
+//            }
+//        }
+//        return $status;
     }
 
     public function cryptProbe(Request $request)
@@ -52,8 +87,12 @@ class PatientController extends Controller
     public function getQuestions(Request $request)
     {
         $patient_id = Crypt::decrypt($request->get('id'));
-        $x= $patient_id;
-        return Result::where('patient_id',$patient_id)->with('question')->paginate($this->paginadoItems);
+        $actualSurvey=Result::where('patient_id', $patient_id)->max('survey');
+        return Result::where('patient_id',$patient_id)->where('survey',$actualSurvey)->with('question')->paginate($this->paginadoItems);
+        // Original
+//        $patient_id = Crypt::decrypt($request->get('id'));
+//        $actualSurvey=Result::where('patient_id', $patient_id)->max('survey');
+//        return Result::where('patient_id',$patient_id)->with('question')->paginate($this->paginadoItems);
     }
 
     public function saveAnswer(Request $request)
@@ -105,11 +144,13 @@ class PatientController extends Controller
 
     public function probe(Request $request)
     {
-        $decrypted = $request->get('patient_id');
+        $decrypted = $request->get('id');
+
+        if(!Patient::find($decrypted)->survey_available){
+            return response()->json([1,1,1], 201);
+        }
 
         $actualSurvey=Result::where('patient_id',$decrypted)->max('survey');
-
-//        return Result::where('patient_id',$decrypted)->where('survey', $actualSurvey)->get();
 
         $status= [];
         $pagesNumber= Result::where('patient_id',$decrypted)->where('survey', $actualSurvey)->paginate($this->paginadoItems)->lastPage();
@@ -130,8 +171,17 @@ class PatientController extends Controller
                 array_push($status,0);
             }
         }
-        return $status;
 
+//        return array_sum($status);
+
+//        return sizeof($status);
+
+        if(array_sum($status)==sizeof($status)){
+            return response()->json([1,1,1], 201);
+        }
+
+
+        return $status;
     }
 
     public function newRecords(Request $request)
@@ -140,7 +190,7 @@ class PatientController extends Controller
             $r= new Result;
             $r->patient_id= 3;
             $r->question=$i;
-            $r->survey=2;
+            $r->survey=4;
             $r->save();
         }
 
