@@ -11,9 +11,11 @@
 |
 */
 
-Route::get('/', function () {
-    return view('prueba');
-});
+//Route::get('/', function () {
+//    return view('prueba');
+//});
+
+Route::get('/{any}', 'SpaController@index')->where('any', '.*');
 
 //Route::get('coco', "");
 

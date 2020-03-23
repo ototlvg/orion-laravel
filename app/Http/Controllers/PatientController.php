@@ -7,6 +7,9 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Crypt;
 use App\Result;
 use App\Patient;
+
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 //use Request;
 
 class PatientController extends Controller
@@ -21,11 +24,24 @@ class PatientController extends Controller
     {
         $decrypted = Crypt::decrypt($request->get('patient_id'));
 
+        // Si de plano no tiene permiso para acceder
         if(!Patient::find($decrypted)->survey_available){
             return response()->json([1,1,1], 201);
         }
 
+        // Si este paciente no tiene ningun record en la tabla, significa que no ha creado sections
+        if(Result::where('patient_id',$decrypted)->first() == null){
+            return response()->json([3.3,3.3], 201);
+        }
+
         $actualSurvey=Result::where('patient_id',$decrypted)->max('survey');
+
+        //
+        $countRecords= Result::where('patient_id',$decrypted)->where('survey', $actualSurvey)->get()->count();
+        if($countRecords != 567){
+            return response()->json([4.1,4.1], 201);
+        }
+        //
 
         $status= [];
         $pagesNumber= Result::where('patient_id',$decrypted)->where('survey', $actualSurvey)->paginate($this->paginadoItems)->lastPage();
@@ -48,33 +64,10 @@ class PatientController extends Controller
         }
 
         if(array_sum($status)==sizeof($status)){
-            return response()->json([1,1,1], 201);
+            return response()->json([1,1,1,1], 201);
         }
 
         return $status;
-
-
-//        $decrypted = Crypt::decrypt($request->get('patient_id'));
-//        $status= [];
-//        $pagesNumber= Result::where('patient_id',$decrypted)->paginate($this->paginadoItems)->lastPage();
-//
-//        for ($i=1; $i<=$pagesNumber; $i++){
-//            $currentPage= $i;
-//            Paginator::currentPageResolver(function () use ($currentPage) {
-//                return $currentPage;
-//            });
-//
-//            $sizeofPaginate= sizeof(Result::where('patient_id',$decrypted)->paginate($this->paginadoItems)->WhereNull('answer'));
-//            if($sizeofPaginate == 0){ // Si el $sizeofPaginate es igual a 0, significa que en la seccion analizada no hay ningun null, la unica forma que pase eso, es que el paciente ya haya contestado todas las preguntas
-//                // Retornar un 1 Significa que este Section no tiene ningun null
-//                // 1 significa que todas las preguntas estan contestadas
-//                array_push($status,1);
-//            }else{
-//                // 0 significa que esta seccion tiene null
-//                array_push($status,0);
-//            }
-//        }
-//        return $status;
     }
 
     public function cryptProbe(Request $request)
@@ -144,56 +137,71 @@ class PatientController extends Controller
 
     public function probe(Request $request)
     {
-        $decrypted = $request->get('id');
 
-        if(!Patient::find($decrypted)->survey_available){
-            return response()->json([1,1,1], 201);
-        }
+//        $pid= $request->get('pid');
+//        $x= Result::where('patient_id',$pid)->get();
+//        return $x->count();
 
-        $actualSurvey=Result::where('patient_id',$decrypted)->max('survey');
+        $countRecords= Result::where('patient_id',14)->where('survey', 1)->get()->count();
+        return response()->json($countRecords, 201);
+//        if($countRecords != 567){
+//            return response()->json([3.3,3.3], 201);
+//        }
 
-        $status= [];
-        $pagesNumber= Result::where('patient_id',$decrypted)->where('survey', $actualSurvey)->paginate($this->paginadoItems)->lastPage();
-
-        for ($i=1; $i<=$pagesNumber; $i++){
-            $currentPage= $i;
-            Paginator::currentPageResolver(function () use ($currentPage) {
-                return $currentPage;
-            });
-
-            $sizeofPaginate= sizeof(Result::where('patient_id',$decrypted)->where('survey', $actualSurvey)->paginate($this->paginadoItems)->WhereNull('answer'));
-            if($sizeofPaginate == 0){ // Si el $sizeofPaginate es igual a 0, significa que en la seccion analizada no hay ningun null, la unica forma que pase eso, es que el paciente ya haya contestado todas las preguntas
-                // Retornar un 1 Significa que este Section no tiene ningun null
-                // 1 significa que todas las preguntas estan contestadas
-                array_push($status,1);
-            }else{
-                // 0 significa que esta seccion tiene null
-                array_push($status,0);
-            }
-        }
-
-//        return array_sum($status);
-
-//        return sizeof($status);
-
-        if(array_sum($status)==sizeof($status)){
-            return response()->json([1,1,1], 201);
-        }
-
-
-        return $status;
+//        for ($i=1; $i<=567; $i++){
+//            DB::table('results')->insertGetId(
+//                [
+//                    'patient_id' => 14,
+//                    'question' => $i,
+//                    'answer' => null,
+//                    'survey' => 1
+//                ]
+//            );
+//        }
+//
+//        return response()->json('Exito', 201);
     }
 
     public function newRecords(Request $request)
     {
         for ($i=1; $i<=567; $i++){
             $r= new Result;
-            $r->patient_id= 3;
+            $r->patient_id= 14;
             $r->question=$i;
-            $r->survey=4;
+            $r->survey=3;
             $r->save();
         }
 
         return response()->json($r, 201);
+    }
+
+    public function createSections(Request $request)
+    {
+
+        $patient_id= Crypt::decrypt($request->get('patient_id'));
+
+        if(!Patient::find($patient_id)->survey_available){
+            return response()->json([1,1,1], 201);
+        }
+
+        // Si este paciente no tiene ningun record en la tabla, significa que no ha creado sections
+        if(!Result::where('patient_id',$patient_id)->first()==null){
+            return response()->json([3.3,3.3], 201);
+        }
+
+
+        for ($i=1; $i<=567; $i++){
+            DB::table('results')->insertGetId(
+                [
+                    'patient_id' => $patient_id,
+                    'question' => $i,
+                    'answer' => null,
+                    'survey' => 1
+                ]
+            );
+        }
+
+        return response()->json(1, 201);
+
     }
 }

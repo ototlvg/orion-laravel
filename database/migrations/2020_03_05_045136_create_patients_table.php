@@ -18,7 +18,7 @@ class CreatePatientsTable extends Migration
             $table->string('code');
             $table->string('name');
             $table->string('apaterno');
-            $table->string('amaterno');
+            $table->string('amaterno')->nullable();
             $table->unsignedBigInteger('gender');
             $table->foreign('gender')->references('id')->on('gender')->onDelete('cascade');
             $table->unsignedBigInteger('marital_status');
@@ -28,7 +28,7 @@ class CreatePatientsTable extends Migration
             $table->foreign('job')->references('id')->on('job_titles')->onDelete('cascade');
             $table->string('email')->unique()->nullable();
 //            $table->string('password')->nullable();
-            $table->unsignedBigInteger('type')->default(1);
+            $table->unsignedBigInteger('type');
             $table->foreign('type')->references('id')->on('user_types')->onDelete('cascade');
             $table->boolean('survey_available')->default(1);
             $table->bigInteger('completed_surveys')->default(0);

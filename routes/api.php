@@ -25,6 +25,11 @@ Route::get('/getquestions', 'PatientController@getQuestions');
 Route::get('/getpersonal', 'PatientController@getPersonal');
 Route::post('/saveanswer', 'PatientController@saveAnswer');
 Route::post('/login', 'PatientController@login');
+Route::get('/createsections', 'PatientController@createSections');
+
+Route::resource('/register', 'PatientRegisterController');
+
+
 // Pruebas
 Route::get('/probe', 'PatientController@probe');
 Route::get('/newrecords', 'PatientController@newRecords');
