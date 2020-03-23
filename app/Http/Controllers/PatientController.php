@@ -90,7 +90,7 @@ class PatientController extends Controller
 
     public function saveAnswer(Request $request)
     {
-
+        return response()->json('Hola mundo', 201);
         $patient_id = Crypt::decrypt($request->get('patient'));
         // Ordenara todas los results en un arreglo, el primer valor del arreglo sera el record con la columna survey mas alta
         $result= Result::where('patient_id', $patient_id)->where('question', $request->get('id'))->orderBy('survey', 'desc')->first();
