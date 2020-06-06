@@ -8,7 +8,8 @@ use App\Gender;
 class Patient extends Model
 {
     protected $hidden = [
-        'password', 'remember_token','id','updated_at','created_at', 'survey_time'
+//        'password', 'remember_token','id','updated_at','created_at', 'survey_time'
+        'password', 'remember_token','updated_at','created_at', 'survey_time'
     ];
 
 

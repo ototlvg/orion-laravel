@@ -15,6 +15,7 @@
 //    return view('prueba');
 //});
 
+Route::get('/energia', 'PruebaController@prueba');
 Route::get('/{any}', 'SpaController@index')->where('any', '.*');
 
 //Route::get('coco', "");

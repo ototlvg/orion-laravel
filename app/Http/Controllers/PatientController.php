@@ -119,7 +119,6 @@ class PatientController extends Controller
             $db[0]->id_en= encrypt($db[0]->id);
             $db[0]->completed_surveys= encrypt($db[0]->completed_surveys);
             return response()->json($db[0], 201);
-
         }
     }
 
