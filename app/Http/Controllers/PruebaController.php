@@ -3,7 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Result;
+//use PDF;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Illuminate\Http\Request;
+
+use Maatwebsite\Excel\Facades\Excel;
+
+use App\Imports\ConversionesImport;
+use App\Imports\InterpretacionesImport;
+use App\Imports\InterpretacionesValidezImport;
 
 class PruebaController extends Controller
 {
@@ -118,5 +126,55 @@ class PruebaController extends Controller
             $i= $i+1;
         }
         return $puntuacionesCrudas;
+    }
+
+    public function excelSubir()
+    {
+        return view('archivos');
+    }
+
+    public function excel(Request $request)
+    {
+
+//        $file= $request->file('interpretaciones');
+//        Excel::import(new InterpretacionesImport(), $file);
+
+
+
+        $file= $request->file('interValidez');
+        Excel::import(new InterpretacionesValidezImport, $file);
+
+
+//        if($x==1){
+//            $file= $request->file('file');
+//            Excel::import(new ConversionesImport(), $file);
+//        }elseif($x==2){
+//            $file= $request->file('interpretaciones');
+//            Excel::import(new InterpretacionesImport(), $file);
+//        }else{
+//            $file= $request->file('interValidez');
+//            Excel::import(new InterpretacionesValidezImport, $file);
+//        }
+
+        return 'Exito';
+    }
+
+    public function pdf()
+    {
+//        $pdf= PDF::loadView('reporteFinal', compact('global', 'date', 'empresa', 'admin', 'departamento_name'));
+//        return view('welcome');
+//        PDF::setOptions(['dpi' => 150, 'isJavascriptEnabled' => true]);
+//        $pdf= PDF::loadView('welcome');
+//        return $pdf->stream();
+//        return $pdf->download('reporte.pdf');
+
+//        $pdf= PDF::loadView('welcome');
+//        return $pdf->stream('reporte.pdf');
+
+//        $pdf= PDF::loadHTML('<h1>Hellow World</h1>');
+//        return view('welcome');
+        $pdf= PDF::loadView('welcome');
+        $pdf->setOption('enable-javascript',true);
+        return $pdf->stream('ds.pdf');
     }
 }
