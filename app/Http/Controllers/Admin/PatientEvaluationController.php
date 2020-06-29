@@ -270,15 +270,20 @@ class PatientEvaluationController extends Controller
 
         for($i=0; $i<sizeof($puntuacionesCompletas);$i++){
             $flag= $i;
-            if($sexo==2 && $i==7){
-                $i= 43;
-            }
+
+//            if($sexo==2 && $i==7){
+//                $i= 43;
+//            }
 
             // Si no existe el registro no retorna nada y al querer obtener $pt[0] al estar vacio el index 0, pues da un error
             $pt= Conversion::where('sexo', $sexo)->where('escala', $i+1)->where('puntuacion_cruda', $puntuacionesCompletas[$flag])->select('puntuacion_t')->get();
-            if($i==43){
-//                return $puntuacionesCompletas[$flag];
-            }
+
+
+//            if($i==43){
+////                return $puntuacionesCompletas[$flag];
+//            }
+
+
             if(empty($pt[0])){
 //                return $i;
 //                return $sexo;
@@ -290,9 +295,9 @@ class PatientEvaluationController extends Controller
 
             array_push($puntuacionesT,$puntuacionT);
 
-            if($i==43){
-                $i=$flag;
-            }
+//            if($i==43){
+//                $i=$flag;
+//            }
 
             // Extra
             if($i<3){
@@ -363,31 +368,36 @@ class PatientEvaluationController extends Controller
             $flag= $i;
 
             if($i==8 && $sexo==2){ // Si es 8!!!
-                $i=44;
+//                $i=44;
                 $j=1;
             }
 
             $identificador=0;
             if($pt>=$pEc[$j][0]){ // 76
-                $identificador= !($sexo==2&&$i==44) ? 1 : 6;
+                $identificador= !($sexo==2&&$j==1) ? 1 : 6;
             }elseif($pt>=$pEc[$j][1] && $pt<=$pEc[$j][2]){ // 66 - 75
-                $identificador= !($sexo==2&&$i==44) ? 2 : 7;
+                $identificador= !($sexo==2&&$j==1) ? 2 : 7;
             }elseif($pt>=$pEc[$j][3] && $pt<=$pEc[$j][4]){ // 56 - 65
-                $identificador= !($sexo==2&&$i==44) ? 3 : 8;
+                $identificador= !($sexo==2&&$j==1) ? 3 : 8;
             }elseif($pt>=$pEc[$j][5] && $pt<=$pEc[$j][6]){ // 41 a 55
-                $identificador= 4;
+//                $identificador= 4;
+                $identificador= !($sexo==2&&$j==1) ? 4 : 9;
             }else{
-                $identificador= 5;
+//                $identificador= 5;
+                $identificador= !($sexo==2&&$j==1) ? 5 : 10;
             }
 
             $ic= Interpretacion::where('escala', $i)->where('nivel', $identificador)->get();
+//            if($ic[0]==0){
+//                return $i;
+//            }
             if(empty($ic[0])){
                 $ic[0]= "Error";
             }
             array_push($interClinicas, $ic[0]);
 
-            if($i==44){
-                $i= $flag;
+            if($j==1){
+//                $i= $flag;
                 $j=0;
             }
             $i++;
@@ -404,7 +414,7 @@ class PatientEvaluationController extends Controller
     public function suplementaria($patient_id)
     {
         $this->results= Result::where('patient_id',$patient_id)->get();
-        $sexo= Patient::find($patient_id)->gender==1 ? true:false; // $sexo==1 -> Masculino     $sexo==2 ->Femenino
+        $sexo= Patient::find($patient_id)->gender; // $sexo==1 -> Masculino     $sexo==2 ->Femenino
         $escalas = array (
             // A - Ansiedad (0)
             array(31,38,56,65,82,127,135,215,233,243,251,273,277,289,301,309,310,311,325,328,338,339,341,347,390,391,394,400,408,411,415,421,428,442,448,451,464,469),
@@ -418,6 +428,9 @@ class PatientEvaluationController extends Controller
             // A-MAC - Alcoholismo de MacAndrew revisada (3)
             array(7,24,36,49,52,69,72,82,84,103,105,113,115,128,168,172,202,214,224,229,238,257,280,342,344,387,407,412,414,422,434,439,445,456,473,502,506,549), //--ERROR HABIA PUESTO 471 EN VEZ DE 473
             array(73,107,117,137,160,166,251,266,287,299,325),
+            // Fp (14)
+            array(281,291,303,311,317,319,322,323,329,332,333,334,387,395,407,431,450,454,463,468,476,478,484,489,506,516,517,520,524,525,526,528,530,539,540,544,555),
+            array(383,404,501),
             // HR - Hostilidad reprimida (4)
             array(67,79,207,286,305,398,471),
             array(1,15,29,69,77,89,98,116,117,129,153,169,171,293,344,390,400,420,433,440,460),
@@ -431,33 +444,35 @@ class PatientEvaluationController extends Controller
             array(15,16,28,31,38,71,73,81,82,110,130,215,218,233,269,273,299,302,325,331,339,357,408,411,449,464,469,472),
             array(2,3,9,10,20,43,95,131,140,148,152,223,405),
             // GM - Genero masculino (8) || Genero femenino (8)
-            $sexo ? array(8,20,143,152,159,163,176,199,214,237,321,350,385,388,401,440,462,467,474) : array(62,67,119,121,128,203,263,266,353,384,426,449,456,473,552),
-            $sexo ? array(4,23,44,64,70,73,74,80,100,137,146,187,289,331,351,364,392,395,435,438,441,469,471,498,509,519,532,536) : array(1,27,63,68,79,84,105,123,133,155,197,201,220,231,238,239,250,257,264,272,287,406,417,465,477,487,510,511,537,548,550),
+//            $sexo ? array(8,20,143,152,159,163,176,199,214,237,321,350,385,388,401,440,462,467,474) : array(62,67,119,121,128,203,263,266,353,384,426,449,456,473,552),
+//            $sexo ? array(4,23,44,64,70,73,74,80,100,137,146,187,289,331,351,364,392,395,435,438,441,469,471,498,509,519,532,536) : array(1,27,63,68,79,84,105,123,133,155,197,201,220,231,238,239,250,257,264,272,287,406,417,465,477,487,510,511,537,548,550),
             // GM - Genero masculino (8)
-//            array(8,20,143,152,159,163,176,199,214,237,321,350,385,388,401,440,462,467,474),
-//            array(4,23,44,64,70,73,74,80,100,137,146,187,289,331,351,364,392,395,435,438,441,469,471,498,509,519,532,536),
+            array(8,20,143,152,159,163,176,199,214,237,321,350,385,388,401,440,462,467,474),
+            array(4,23,44,64,70,73,74,80,100,137,146,187,289,331,351,364,392,395,435,438,441,469,471,498,509,519,532,536),
             // GF - Genero femenino (9)
-//            array(62,67,119,121,128,203,263,266,353,384,426,449,456,473,552),
-//            array(1,27,63,68,79,84,105,123,133,155,197,201,220,231,238,239,250,257,264,272,287,406,417,465,477,487,510,511,537,548,550),
-            // EPK - Desorden de estres postraumatico de Keane (9)
+            array(62,67,119,121,128,203,263,266,353,384,426,449,456,473,552),
+            array(1,27,63,68,79,84,105,123,133,155,197,201,220,231,238,239,250,257,264,272,287,406,417,465,477,487,510,511,537,548,550),
+            // EPK - Desorden de estres postraumatico de Keane (10)
             array(16,17,22,23,30,31,32,37,39,48,52,56,59,65,82,85,92,94,101,135,150,168,170,196,221,274,277,302,303,305,316,319,327,328,339,347,349,367),
             array(2,3,9,49,75,95,125,140),
-            // EPS - Desorden de estres postraumatico de Schelenger (10)
+            // EPS - Desorden de estres postraumatico de Schelenger (11)
             array(17,21,22,31,32,37,38,44,48,56,59,65,85,94,116,135,145,150,168,170,180,218,221,273,274,277,299,301,304,305,311,316,319,325,328,377,386,400,463,464,469,471,475,479,515,516,565),
             array(3,9,45,75,95,141,165,208,223,280,372,405,564),
-            // Is1 (11)
+            // Is1 (12)
             array(158,161,167,185,243,265,275,289),
             array(49,262,280,321,342,360), // -ERROR puse 242 en vez de 342
-            // Is2 (12)
+            // Is2 (13)
             array(336,367),
             array(86,340,353,359,363,370),
-            // Is3 (13)
+            // Is3 (14)
             array(31,56,104,110,135,284,302,308,326,328,338,347,348,358,364,368,369),
             array(0),
-            // Fp (14)
-            array(281,291,303,311,317,319,322,323,329,332,333,334,387,395,407,431,450,454,463,468,476,478,484,489,506,516,517,520,524,525,526,528,530,539,540,544,555),
-            array(383,404,501)
         );
+        $obj= new Obj();
+        unset($obj->factorKAgregado);
+        unset($obj->puntuacionCrudaConK);
+        unset($obj->puntuacionesCrudas);
+
         $puntuacionesCrudas= [];
         for($i=0; $i<sizeof($escalas); $i++){
             $v= $this->verdadero($escalas[$i]);
@@ -465,8 +480,29 @@ class PatientEvaluationController extends Controller
             array_push($puntuacionesCrudas, ($v+$f));
             $i= $i+1;
         }
-        $i=0;
+        $obj->puntuacionesCompletas= $puntuacionesCrudas; // Puntuaciones crudas es lo mismo que puntuaciones completas, ya que aqui en ningun momento se agrega el factor K
         $x=[];
+//        return $puntuacionesCrudas;
+        // Puntuaciones T
+        $puntuacionesT=[];
+        $sexo = $sexo==1 ? 1 : 2;
+        $escala=14;
+        foreach($puntuacionesCrudas as $pCruda){
+            // Si no existe el registro no retorna nada y al querer obtener $pt[0] al estar vacio el index 0, pues da un error
+            $pt= Conversion::where('sexo', $sexo)->where('escala', $escala)->where('puntuacion_cruda', $pCruda)->select('puntuacion_t')->get();
+//
+            if(empty($pt[0])){
+                $puntuacionT= 0;
+            }else{
+                $puntuacionT= $pt[0]->puntuacion_t;
+            }
+
+            array_push($puntuacionesT,$puntuacionT);
+            $escala++;
+        }
+//        return $puntuacionesT;
+        $obj->puntuacionesT= $puntuacionesT;
+
 
         // INVAR
         $invarVerdaderos= array(
@@ -584,7 +620,7 @@ class PatientEvaluationController extends Controller
 //        return $invarSumaVerdadores+$invarSumaFalsos+$invarSumaFalsosVerdadores;
 //        return $invarSumaFalsosVerdadores;
         array_push($puntuacionesCrudas, ($invarSumaVerdadores+$invarSumaFalsos+$invarSumaFalsosVerdadores));
-
+        $obj->invar= ($invarSumaVerdadores+$invarSumaFalsos+$invarSumaFalsosVerdadores);
 
 
         // INVER
@@ -640,9 +676,12 @@ class PatientEvaluationController extends Controller
         }
 
         array_push($puntuacionesCrudas, ($inverSumaVerdadores-$inverSumaFalsos+10));
+        $obj->inver= ($inverSumaVerdadores-$inverSumaFalsos+9);
 
-        $obj= new Obj();
-        $obj->puntuacionesCrudas= $puntuacionesCrudas; // [A,R,Fyo,A-MAC,HR,Do,Rs,Dpr,GM||GF,EPK,EPS,Is1,Is2,Is3,Fp,INVAR,INVER]
+
+//        $obj->puntuacionesCrudas= $puntuacionesCrudas; // [A,R,Fyo,A-MAC,Fp,HR,Do,Rs,Dpr,GM,GF,EPK,EPS,Is1,Is2,Is3,INVAR,INVER]
+
+
         return response()->json($obj, 201);
     }
 

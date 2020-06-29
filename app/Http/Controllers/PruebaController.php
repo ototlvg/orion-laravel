@@ -12,6 +12,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ConversionesImport;
 use App\Imports\InterpretacionesImport;
 use App\Imports\InterpretacionesValidezImport;
+use App\Imports\EscalasImport;
+
 
 class PruebaController extends Controller
 {
@@ -136,13 +138,19 @@ class PruebaController extends Controller
     public function excel(Request $request)
     {
 
+        $file= $request->file('file');
+        Excel::import(new ConversionesImport(), $file);
+
 //        $file= $request->file('interpretaciones');
 //        Excel::import(new InterpretacionesImport(), $file);
 
+//        $file= $request->file('interValidez');
+//        Excel::import(new InterpretacionesValidezImport, $file);
+
+//        $file= $request->file('escalas');
+//        Excel::import(new EscalasImport, $file);
 
 
-        $file= $request->file('interValidez');
-        Excel::import(new InterpretacionesValidezImport, $file);
 
 
 //        if($x==1){

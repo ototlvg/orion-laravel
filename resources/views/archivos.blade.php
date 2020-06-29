@@ -11,11 +11,13 @@
 
     <form action="{{ route('subir.excel')  }}" method="post" enctype="multipart/form-data">
         @csrf
-{{--        <input type="file" name="file" id="file">Conversiones--}}
+        <input type="file" name="file" id="file">Conversiones
 {{--        <br>--}}
 {{--        <input type="file" name="interpretaciones" id="file2">Interpretaciones--}}
 {{--        <br>--}}
-        <input type="file" name="interValidez" id="file3">Interpretaciones de Validez
+{{--        <input type="file" name="interValidez" id="file3">Interpretaciones de Validez--}}
+{{--        <br>--}}
+{{--        <input type="file" name="escalas" id="file4">Escalas--}}
 {{--        <br>--}}
         <button>Importar archivos</button>
     </form>
