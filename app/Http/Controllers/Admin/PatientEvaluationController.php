@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Escala;
 use App\Http\Controllers\Controller;
 use App\Patient;
 use App\Result;
@@ -38,6 +39,27 @@ class PatientEvaluationController extends Controller
             $value+= !$this->results[$answerOfQuestion-1]->answer;
         }
         return $value;
+    }
+
+    private function getPuntuacionesT($puntuacionesCrudas, $escala, $sexo){
+        // Puntuaciones T
+        $puntuacionesT=[];
+        $sexo = $sexo==1 ? 1 : 2;
+//        $escala=30;
+        foreach($puntuacionesCrudas as $pCruda){
+            // Si no existe el registro no retorna nada y al querer obtener $pt[0] al estar vacio el index 0, pues da un error
+            $pt= Conversion::where('sexo', $sexo)->where('escala', $escala)->where('puntuacion_cruda', $pCruda)->select('puntuacion_t')->get();
+
+            if(empty($pt[0])){
+                $puntuacionT= 0;
+            }else{
+                $puntuacionT= $pt[0]->puntuacion_t;
+            }
+
+            array_push($puntuacionesT,$puntuacionT);
+            $escala++;
+        }
+        return $puntuacionesT;
     }
 
     public function basicaAntigua($patient_id)
@@ -162,6 +184,7 @@ class PatientEvaluationController extends Controller
     public function basica($patient_id)
     {
         $this->results= Result::where('patient_id',$patient_id)->get();
+//        return $this->results;
         $sexo= Patient::find($patient_id)->gender==1 ? true:false; // $sexo==1 -> Masculino     $sexo==2 ->Femenino
         $escalas = array (
             // -------- Escalas de Validez
@@ -237,9 +260,17 @@ class PatientEvaluationController extends Controller
         }
 
         $obj= new Obj();
+
+        // Datos de las Escalas
+        $escalasdb= Escala::where('tipo',1)->get();
+        $obj->escalas= $escalasdb;
+
         $obj->puntuacionesCrudas= $puntuacionesCrudas;
         $obj->factorKAgregado= $factorKAgregado;
         $obj->puntuacionCrudaConK= $puntuacionCrudaConK;
+
+
+//        return $escalasdb;
 
         ///
         $obj->puntuacionesCompletas= $puntuacionesCompletas;
@@ -469,9 +500,13 @@ class PatientEvaluationController extends Controller
             array(0),
         );
         $obj= new Obj();
-        unset($obj->factorKAgregado);
-        unset($obj->puntuacionCrudaConK);
-        unset($obj->puntuacionesCrudas);
+//        unset($obj->factorKAgregado);
+//        unset($obj->puntuacionCrudaConK);
+//        unset($obj->puntuacionesCrudas);
+
+        // Datos de las Escalas
+        $escalasdb= Escala::where('tipo',2)->get();
+        $obj->escalas= $escalasdb;
 
         $puntuacionesCrudas= [];
         for($i=0; $i<sizeof($escalas); $i++){
@@ -484,22 +519,26 @@ class PatientEvaluationController extends Controller
         $x=[];
 //        return $puntuacionesCrudas;
         // Puntuaciones T
-        $puntuacionesT=[];
-        $sexo = $sexo==1 ? 1 : 2;
         $escala=14;
-        foreach($puntuacionesCrudas as $pCruda){
-            // Si no existe el registro no retorna nada y al querer obtener $pt[0] al estar vacio el index 0, pues da un error
-            $pt= Conversion::where('sexo', $sexo)->where('escala', $escala)->where('puntuacion_cruda', $pCruda)->select('puntuacion_t')->get();
-//
-            if(empty($pt[0])){
-                $puntuacionT= 0;
-            }else{
-                $puntuacionT= $pt[0]->puntuacion_t;
-            }
 
-            array_push($puntuacionesT,$puntuacionT);
-            $escala++;
-        }
+//        $sexo = $sexo==1 ? 1 : 2;
+//        $puntuacionesT=[];
+//        foreach($puntuacionesCrudas as $pCruda){
+//            // Si no existe el registro no retorna nada y al querer obtener $pt[0] al estar vacio el index 0, pues da un error
+//            $pt= Conversion::where('sexo', $sexo)->where('escala', $escala)->where('puntuacion_cruda', $pCruda)->select('puntuacion_t')->get();
+//
+//            if(empty($pt[0])){
+//                $puntuacionT= 0;
+//            }else{
+//                $puntuacionT= $pt[0]->puntuacion_t;
+//            }
+//
+//            array_push($puntuacionesT,$puntuacionT);
+//            $escala++;
+//        }
+        $puntuacionesT= $this->getPuntuacionesT($puntuacionesCrudas, $escala,$sexo);
+
+
 //        return $puntuacionesT;
         $obj->puntuacionesT= $puntuacionesT;
 
@@ -756,8 +795,40 @@ class PatientEvaluationController extends Controller
         }
 
 
+        // Puntuaciones T
+        $escala=30;
+
+//        $sexo = $sexo==1 ? 1 : 2;
+//        $puntuacionesT=[];
+//        foreach($puntuacionesCrudas as $pCruda){
+//            // Si no existe el registro no retorna nada y al querer obtener $pt[0] al estar vacio el index 0, pues da un error
+//            $pt= Conversion::where('sexo', $sexo)->where('escala', $escala)->where('puntuacion_cruda', $pCruda)->select('puntuacion_t')->get();
+//
+//            if(empty($pt[0])){
+//                $puntuacionT= 0;
+//            }else{
+//                $puntuacionT= $pt[0]->puntuacion_t;
+//            }
+//
+//            array_push($puntuacionesT,$puntuacionT);
+//            $escala++;
+//        }
+
+        $puntuacionesT= $this->getPuntuacionesT($puntuacionesCrudas, $escala,$sexo);
+
+
+
+//        return $puntuacionesT;
+
+
         $obj= new Obj();
+
+        // Datos de las Escalas
+        $escalasdb= Escala::where('tipo',3)->get();
+        $obj->escalas= $escalasdb;
+
         $obj->puntuacionesCrudas= $puntuacionesCrudas; // []
+        $obj->puntuacionesT= $puntuacionesT;
         return response()->json($obj, 201);
 
 //        return $puntuacionesCrudas;

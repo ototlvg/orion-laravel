@@ -6,8 +6,8 @@ namespace App\CustomClass;
 
 class Obj
 {
-    var $puntuacionesCrudas;
-    var $factorKAgregado;
-    var $puntuacionCrudaConK;
+//    var $puntuacionesCrudas;
+//    var $factorKAgregado;
+//    var $puntuacionCrudaConK;
 
 }
