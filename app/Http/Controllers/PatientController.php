@@ -35,7 +35,6 @@ class PatientController extends Controller
         }
 
         $actualSurvey=Result::where('patient_id',$decrypted)->max('survey');
-
         //
         $countRecords= Result::where('patient_id',$decrypted)->where('survey', $actualSurvey)->get()->count();
         if($countRecords != 567){
@@ -91,11 +90,35 @@ class PatientController extends Controller
     public function saveAnswer(Request $request)
     {
         $patient_id = Crypt::decrypt($request->get('patient'));
+        $checkLastSection= $request->get('checkLastSection');
+        $completed_surveys= Crypt::decrypt($request->get('completedSurveys'));
+        $survey_available= Crypt::decrypt($request->get('surveyAvailable'));
+        $questionid= $request->get('id');
         // Ordenara todas los results en un arreglo, el primer valor del arreglo sera el record con la columna survey mas alta
-        $result= Result::where('patient_id', $patient_id)->where('question', $request->get('id'))->orderBy('survey', 'desc')->first();
+//        $result= Result::where('patient_id', $patient_id)->where('question', $request->get('id'))->where('survey',1)->orderBy('survey', 'desc')->first();
+        $result= Result::where('patient_id', $patient_id)->where('question', $questionid)->where('survey',$completed_surveys+1)->orderBy('survey', 'desc')->first();
+//        return $result;
         $result->answer= $request->get('answer');
-        $result->save();
-        return response()->json($result, 201);
+//        if($result->save()){
+        if($result->save()){
+
+            if($checkLastSection){
+                $x=Result::where('patient_id',$patient_id)->where('survey', $completed_surveys+1)->WhereNull('answer')->get();
+                if(count($x) == 0){
+//                    Aqui pon el codigo para actualizar los registros de encuesta contestada
+                    $pf= Patient::find($patient_id);
+                    $pf->survey_available=0;
+                    $csn= $pf->completed_surveys;
+                    $pf->completed_surveys= $csn+1;
+                    $pf->save();
+//                    return $pf;
+                }
+
+            }
+
+            return response()->json($result, 201);
+        }
+//        return response()->json($result, 201);
 
         // Codigo este
 //        $patient_id = Crypt::decrypt($request->get('patient'));
@@ -124,11 +147,14 @@ class PatientController extends Controller
 
     public function getPersonal(Request $request)
     {
+        // ESTE SE USA SOLO PARA EL FRONT-END
         $id= Crypt::decrypt($request->get('id'));
         $p= Patient::find($id);
         unset($p->code);
-        unset($p->completed_surveys);
-        unset($p->survey_available);
+        $p->completed_surveys= encrypt($p->completed_surveys);
+        $p->survey_available= encrypt($p->survey_available);
+//        unset($p->completed_surveys);
+//        unset($p->survey_available);
         unset($p->type  );
         return response()->json($p, 201);
     }

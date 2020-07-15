@@ -6,6 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Patient;
 
+use App\Job;
+use App\Marital;
+use App\Gender;
+use App\CustomClass\Data;
+use Illuminate\Support\Facades\DB;
+
 class PatientCRUDController extends Controller
 {
     /**
@@ -13,7 +19,7 @@ class PatientCRUDController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    var $paginationNumber=20;
+    var $paginationNumber=8;
 
     public function index()
     {
@@ -98,6 +104,42 @@ class PatientCRUDController extends Controller
 //        })->paginate(2);
 //        return $patients;
 
-        return Patient::where('name', 'LIKE' ,$search)->orWhere('apaterno', 'LIKE' ,$search)->orWhere('amaterno','LIKE',$search)->paginate($this->paginationNumber);
+        return Patient::where('name', 'LIKE' ,"%$search%")->orWhere('apaterno', 'LIKE' ,"%$search%")->orWhere('amaterno','LIKE',"%$search%")->paginate($this->paginationNumber);
+    }
+
+    public function getFormData(Request $request)
+    {
+        $jobs= Job::all();
+        $genders= Gender::all();
+        $marital= Marital::all();
+        $data= new Data();
+        $data->setJobs($jobs);
+        $data->setGenders($genders);
+        $data->setMarital($marital);
+        return response()->json($data, 201);
+    }
+
+    public function reactivate(Request $request)
+    {
+        $p= Patient::find($request->get('patient_id'));
+        $survey= ($p->completed_surveys)+1;
+        for ($i=1; $i<=567; $i++){
+            DB::table('results')->insertGetId(
+                [
+                    'patient_id' => $p->id,
+                    'question' => $i,
+                    'answer' => null,
+                    'survey' => $survey
+                ]
+            );
+        }
+        $p->survey_available=1;
+
+        if($p->save()){
+            return response()->json('Registros creados', 201);
+        }else{
+            return response()->json('Fallo', 500);
+        }
+
     }
 }

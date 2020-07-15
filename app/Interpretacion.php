@@ -9,4 +9,8 @@ class Interpretacion extends Model
     protected $table= "interpretaciones";
     public $timestamps = false;
     protected $fillable= ['escala','nivel','interpretacion'];
+
+    function nivel(){
+        return $this->belongsTo('App\Nivel','nivel');
+    }
 }

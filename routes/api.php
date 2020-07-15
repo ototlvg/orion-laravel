@@ -40,9 +40,11 @@ Route::get('/newrecords', 'PatientController@newRecords');
 Route::group(['prefix' => 'admin'], function(){
 //    Route::get('crud', 'Admin\ResultsController@index')->name('results.index'); // El mw que comprueba si el usuario ya contesta la encuesto esta declarado en el Controller ANTES ERA POST
     Route::get('crud/search', 'Admin\PatientCRUDController@search');
+    Route::get('crud/getformdata', 'Admin\PatientCRUDController@getFormData');
+    Route::post('crud/reactivate', 'Admin\PatientCRUDController@reactivate');
     Route::resource('crud', 'Admin\PatientCRUDController');
-    Route::get('mmpi/basica/{patient_id}', 'Admin\PatientEvaluationController@basica');
-    Route::get('mmpi/suplementaria/{patient_id}', 'Admin\PatientEvaluationController@suplementaria');
-    Route::get('mmpi/contenido/{patient_id}', 'Admin\PatientEvaluationController@contenido');
+    Route::get('mmpi/basica/{patient_id}/{survey}', 'Admin\PatientEvaluationController@basica');
+    Route::get('mmpi/suplementaria/{patient_id}/{survey}', 'Admin\PatientEvaluationController@suplementaria');
+    Route::get('mmpi/contenido/{patient_id}/{survey}', 'Admin\PatientEvaluationController@contenido');
 });
 

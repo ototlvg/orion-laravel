@@ -13,8 +13,8 @@ class ResultsTableSeeder extends Seeder
      */
     public function run()
     {
-        $desde= 4;
-        $hasta= 4;
+        $desde= 1;
+        $hasta= 20;
 
         for ($i=$desde; $i<=$hasta; $i++){
 
