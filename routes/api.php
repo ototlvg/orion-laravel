@@ -23,11 +23,20 @@ Route::middleware('auth:api')->post('/logout', 'AuthController@logout');
 Route::post('/decrypt', 'PatientController@cryptProbe');
 
 //Route::get('/getquestions', 'PatientController@getQuestions');
+
+//Route::post('/login', 'PatientController@login');
+
 Route::get('/getsections', 'PatientController@getSections');
+Route::get('/getsectionsprime', 'PatientController@getSectionsPrime');
+
 Route::get('/getquestions', 'PatientController@getQuestions');
+Route::get('/getquestionsprime', 'PatientController@getQuestionsPrime');
+
+Route::post('/login', 'PatientController@login');
+Route::post('/me', 'PatientController@me');
+
 Route::get('/getpersonal', 'PatientController@getPersonal');
 Route::post('/saveanswer', 'PatientController@saveAnswer');
-Route::post('/login', 'PatientController@login');
 Route::get('/createsections', 'PatientController@createSections');
 
 Route::resource('/register', 'PatientRegisterController');

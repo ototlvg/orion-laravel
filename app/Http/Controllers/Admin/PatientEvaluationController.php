@@ -147,6 +147,7 @@ class PatientEvaluationController extends Controller
         }
 
         $obj= new Obj();
+        $obj->survey= $survey;
 
         // Datos de las Escalas
         $escalasdb= Escala::where('tipo',1)->get();
@@ -155,7 +156,6 @@ class PatientEvaluationController extends Controller
         $obj->puntuacionesCrudas= $puntuacionesCrudas;
         $obj->factorKAgregado= $factorKAgregado;
         $obj->puntuacionCrudaConK= $puntuacionCrudaConK;
-        $obj->survey= $survey;
 
 //        return $escalasdb;
 
@@ -404,6 +404,7 @@ class PatientEvaluationController extends Controller
 
         // Datos de las Escalas
         $escalasdb= Escala::where('tipo',2)->get();
+        $obj->survey= $survey;
         $obj->escalas= $escalasdb;
 
         $puntuacionesCrudas= [];
@@ -556,8 +557,10 @@ class PatientEvaluationController extends Controller
         $i=0;
 //        return $invarSumaVerdadores+$invarSumaFalsos+$invarSumaFalsosVerdadores;
 //        return $invarSumaFalsosVerdadores;
-        array_push($puntuacionesCrudas, ($invarSumaVerdadores+$invarSumaFalsos+$invarSumaFalsosVerdadores));
-        $obj->invar= ($invarSumaVerdadores+$invarSumaFalsos+$invarSumaFalsosVerdadores);
+
+        $invar= ($invarSumaVerdadores+$invarSumaFalsos+$invarSumaFalsosVerdadores);
+        array_push($puntuacionesCrudas, $invar);
+        $obj->invar= $invar;
 
 
         // INVER
@@ -611,12 +614,16 @@ class PatientEvaluationController extends Controller
 //            array_push($x, $valor1);
 //            array_push($x, $valor2);
         }
+        $inver= $inverSumaVerdadores-$inverSumaFalsos+9;
+        array_push($puntuacionesCrudas, $inver);
+        $obj->inver= $inver;
 
-        array_push($puntuacionesCrudas, ($inverSumaVerdadores-$inverSumaFalsos+10));
-        $obj->inver= ($inverSumaVerdadores-$inverSumaFalsos+9);
 
 
-//        $obj->puntuacionesCrudas= $puntuacionesCrudas; // [A,R,Fyo,A-MAC,Fp,HR,Do,Rs,Dpr,GM,GF,EPK,EPS,Is1,Is2,Is3,INVAR,INVER]
+        $obj->puntuacionesCompletas= $puntuacionesCrudas; // [A,R,Fyo,A-MAC,Fp,HR,Do,Rs,Dpr,GM,GF,EPK,EPS,Is1,Is2,Is3,INVAR,INVER]
+
+//        $puntuacionesCompletas= $puntuacionesCrudas;
+//        $obj->puntuacionesCompletas= $puntuacionesCrudas;
 
 
         return response()->json($obj, 201);
@@ -726,13 +733,15 @@ class PatientEvaluationController extends Controller
 
 
         $obj= new Obj();
-
+        $obj->survey= $survey;
         // Datos de las Escalas
         $escalasdb= Escala::where('tipo',3)->get();
         $obj->escalas= $escalasdb;
 
-        $obj->puntuacionesCrudas= $puntuacionesCrudas; // []
+//        $obj->puntuacionesCrudas= $puntuacionesCrudas; // []
+        $obj->puntuacionesCompletas= $puntuacionesCrudas; // []
         $obj->puntuacionesT= $puntuacionesT;
+        $obj->nota= "Aqui las puntuaciones crudas son iguales a las puntuaciones completas";
         return response()->json($obj, 201);
 
 //        return $puntuacionesCrudas;

@@ -42,8 +42,14 @@ return [
         ],
 
         'api' => [
-            'driver' => 'passport',
+            'driver' => 'jwt',
             'provider' => 'users',
+            'hash' => false,
+        ],
+
+        'patient' => [
+            'driver' => 'jwt',
+            'provider' => 'patients',
             'hash' => false,
         ],
     ],
@@ -69,6 +75,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\User::class,
+        ],
+
+        'patients' => [
+            'driver' => 'eloquent',
+            'model' => App\Patient::class,
         ],
 
         // 'users' => [
