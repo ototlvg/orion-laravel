@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Crypt;
 use App\Result;
 use App\Patient;
 
+use App\CustomClass\StatusQuestion;
+
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 //use Request;
@@ -21,7 +23,7 @@ class PatientController extends Controller
     {
         $this->paginadoItems= 25; // 25
     }
-    public function getSections(Request $request)
+    public function getSectionsOld(Request $request)
     {
         $decrypted = Crypt::decrypt($request->get('patient_id'));
 
@@ -70,11 +72,14 @@ class PatientController extends Controller
         return $status;
     }
 
-    public function getSectionsPrime()
+    public function getSections(Request $request)
     {
 //        $userid= 27;
-        $userid= 27;
-        $completedSurveys = 0;
+//        $user = auth('patient')->user(); // Esto ya funciona, recuerda poner el token en el Header no en el body
+//        return response()->json($user,201);
+
+        $userid= 2;
+        $completedSurveys = 1;
         $surveyAvailable = 1;
         define("numberOfQuestions", 567);
 //        return numberOfQuestions;
@@ -89,7 +94,7 @@ class PatientController extends Controller
         $actualSurvey = $completedSurveys+1;
 
 //        $results= Result::orderBy('question', 'ASC')->where('patient_id', $userid)->get();
-        $results= Result::select('question')->orderBy('question', 'ASC')->where('patient_id', $userid)->where('survey', 1)->get();
+        $results= Result::select('question')->orderBy('question', 'ASC')->where('patient_id', $userid)->where('survey', $actualSurvey)->get();
 //        $results= Result::where('patient_id', $userid)->where('survey', 1)->get();
 //        return $results;
 
@@ -117,15 +122,16 @@ class PatientController extends Controller
         $section=1;
         $flagQuestion=0;
         $completeSection= true;
-
         for($i=0; $i<$numberOfSections; $i++){
 
             if($i==($numberOfSections-1) && !$isInt){
-                $intSections = $numberOfSections-1;
-                $intTotalQuestions = $this->paginadoItems*$intSections;
-                $overQuestions= numberOfQuestions-$intTotalQuestions;
-                $finalCalculate= $flagQuestion+$overQuestions;
-                $questions = range($flagQuestion+1, $finalCalculate,1);
+//                $intSections = $numberOfSections-1;
+//                $intTotalQuestions = $this->paginadoItems*$intSections;
+//                $overQuestions= numberOfQuestions-$intTotalQuestions;
+//                $finalCalculate= $flagQuestion+$overQuestions;
+//                $questions = range($flagQuestion+1, $finalCalculate,1);
+                $questions = range($flagQuestion+1, 567,1);
+//                return $questions;
             }else{
                 $questions = range($flagQuestion+1, $this->paginadoItems*$section,1);
             }
@@ -140,9 +146,9 @@ class PatientController extends Controller
                 }
             }
 
-            if($section==4){
-                return $questions;
-            }
+//            if($section==4){
+//                return $questions;
+//            }
 
             if($completeSection){
                 array_push($statusSection,1);
@@ -174,12 +180,113 @@ class PatientController extends Controller
 //        return Result::where('patient_id',$patient_id)->with('question')->paginate($this->paginadoItems);
     }
 
-    public function getQuestionsPrime(Request $request)
+    public function getSectionData(Request $request)
     {
+
+
         // Recuerda que en el link se pone ?page=2 por ejemplo y automaticamente la funcion
         // paginate() toma el valor que se envia
-        $questions = Question::paginate($this->paginadoItems);
-        return $questions;
+        $questionsOfSurvey = Question::paginate($this->paginadoItems);
+//        return $questionsOfSurvey;
+
+//        $userid = 2;
+//        $actualSurvey = 2;
+//        $page = $request->get('page');
+
+        $userid = 2;
+        $actualSurvey = 2;
+        $page = $request->get('page');
+
+        $div = 567/$this->paginadoItems;
+        $isInt= is_int($div);
+        $numberOfSections = ceil($div);
+
+        if($numberOfSections == $page && !$isInt){
+            $intPageQuestions = ($page-1)*$this->paginadoItems;
+            $start = $intPageQuestions+1;
+            $final = 567;
+        }else{
+            $start = ($page * $this->paginadoItems) - ($this->paginadoItems-1);
+            $final = $page * $this->paginadoItems;
+        }
+        $questions = range($start, $final,1);
+
+        $results = Result::where('patient_id', $userid)->where('survey',$actualSurvey)->where('question', '>=', $start )->where('question', '<=', $final)->orderBy('question', 'ASC')->get();
+        $questionsAnswered = [];
+
+        $final = [];
+        foreach ($results as $result){
+            array_push($questionsAnswered,$result->question);
+        }
+
+        if($results->isEmpty()){
+            foreach($questions as $question){
+                $sq = (object) ['question' => $question, 'answered' => false, 'survey' => $actualSurvey];
+                array_push($final, $sq);
+            }
+        }else{
+            for($i=0; $i<sizeof($questions); $i++){
+                if(in_array($questions[$i], $questionsAnswered)){
+                    $sq = (object) ['question' => $questions[$i], 'answered' => true, 'survey' => $actualSurvey];
+                }else{
+                    $sq = (object) ['question' => $questions[$i], 'answered' => false, 'survey' => $actualSurvey];
+                }
+                array_push($final, $sq);
+            }
+        }
+
+        $obj = new StatusQuestion();
+        $obj->questions = $questionsOfSurvey;
+        $obj->sectionStatus = $final;
+
+        return response()->json($obj, 201);
+    }
+
+    public function getStatusQuestionsOfSection(Request $request)
+    {
+        $userid = 27;
+        $actualSurvey = 1;
+        $page = $request->get('page');
+
+        $div = 567/$this->paginadoItems;
+        $isInt= is_int($div);
+        $numberOfSections = ceil($div);
+
+        if($numberOfSections == $page && !$isInt){
+            $intPageQuestions = ($page-1)*$this->paginadoItems;
+            $start = $intPageQuestions+1;
+            $final = 567;
+        }else{
+            $start = ($page * $this->paginadoItems) - ($this->paginadoItems-1);
+            $final = $page * $this->paginadoItems;
+        }
+        $questions = range($start, $final,1);
+
+        $results = Result::where('patient_id', $userid)->where('survey',$actualSurvey)->where('question', '>=', $start )->where('question', '<=', $final)->orderBy('question', 'ASC')->get();
+        $questionsAnswered = [];
+
+        $final = [];
+        foreach ($results as $result){
+            array_push($questionsAnswered,$result->question);
+        }
+
+        if($results->isEmpty()){
+            foreach($questions as $question){
+                $sq = (object) ['question' => $question, 'answered' => false, 'survey' => $actualSurvey];
+                array_push($final, $sq);
+            }
+        }else{
+            for($i=0; $i<sizeof($questions); $i++){
+                if(in_array($questions[$i], $questionsAnswered)){
+                    $sq = (object) ['question' => $questions[$i], 'answered' => true, 'survey' => $actualSurvey];
+                }else{
+                    $sq = (object) ['question' => $questions[$i], 'answered' => false, 'survey' => $actualSurvey];
+                }
+                array_push($final, $sq);
+            }
+        }
+
+        return $final;
     }
 
     public function saveAnswer(Request $request)
@@ -228,18 +335,18 @@ class PatientController extends Controller
 
     public function login(Request $request)
     {
-//        $user = Patient::where('code',$request->get('code'))->get()[0];
-//        $token = auth('api')->login($user);
-//        return response()->json($token,201);
+        $user = Patient::where('code',$request->get('code'))->get()[0];
+        $token = auth('api')->login($user);
+        return response()->json($token,201);
 
-        $db= Patient::where('code', $request->get('code'))->with('gender')->get();
-        if(sizeof($db)==0){
-            return response()->json('No hay nada', 404);
-        }else{
-            $db[0]->id_en= encrypt($db[0]->id);
-            $db[0]->completed_surveys= encrypt($db[0]->completed_surveys);
-            return response()->json($db[0], 201);
-        }
+//        $db= Patient::where('code', $request->get('code'))->with('gender')->get();
+//        if(sizeof($db)==0){
+//            return response()->json('No hay nada', 404);
+//        }else{
+//            $db[0]->id_en= encrypt($db[0]->id);
+//            $db[0]->completed_surveys= encrypt($db[0]->completed_surveys);
+//            return response()->json($db[0], 201);
+//        }
     }
 
     public function me()

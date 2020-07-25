@@ -26,11 +26,13 @@ Route::post('/decrypt', 'PatientController@cryptProbe');
 
 //Route::post('/login', 'PatientController@login');
 
-Route::get('/getsections', 'PatientController@getSections');
-Route::get('/getsectionsprime', 'PatientController@getSectionsPrime');
+//Route::get('/getsections', 'PatientController@getSections');
+Route::get('/getsections', 'PatientController@getSections')->middleware('checkPatientCookie');
 
 Route::get('/getquestions', 'PatientController@getQuestions');
 Route::get('/getquestionsprime', 'PatientController@getQuestionsPrime');
+
+Route::get('/getsectiondata', 'PatientController@getSectionData');
 
 Route::post('/login', 'PatientController@login');
 Route::post('/me', 'PatientController@me');
