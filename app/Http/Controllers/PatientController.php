@@ -102,6 +102,8 @@ class PatientController extends Controller
         foreach ($results as $result){
             array_push($questionsAvailable, $result->question);
         }
+
+//        return $questionsAvailable;
 //        return $questionsAvailable;
         $statusSection = [];
 
@@ -135,10 +137,12 @@ class PatientController extends Controller
             }else{
                 $questions = range($flagQuestion+1, $this->paginadoItems*$section,1);
             }
-
+//            return $questions;
             foreach($questions as $question){
                 $questionExists = in_array($question, $questionsAvailable);
                 $flagQuestion++;
+//                $completeSection = true;
+//                return $flagQuestion;
                 if(!$questionExists){
                     $flagQuestion= end($questions);
                     $completeSection=false;
@@ -225,11 +229,13 @@ class PatientController extends Controller
                 array_push($final, $sq);
             }
         }else{
+            $flagRealQuestions = 0;
             for($i=0; $i<sizeof($questions); $i++){
                 if(in_array($questions[$i], $questionsAnswered)){
-                    $sq = (object) ['question' => $questions[$i], 'answered' => true, 'survey' => $actualSurvey];
+                    $sq = (object) ['question' => $questions[$i], 'answered' => true, 'survey' => $actualSurvey, 'answer' => $results[$flagRealQuestions]->answer];
+                    $flagRealQuestions++;
                 }else{
-                    $sq = (object) ['question' => $questions[$i], 'answered' => false, 'survey' => $actualSurvey];
+                    $sq = (object) ['question' => $questions[$i], 'answered' => false, 'survey' => $actualSurvey, 'answer' => null];
                 }
                 array_push($final, $sq);
             }
@@ -331,6 +337,75 @@ class PatientController extends Controller
 //        $result->answer= $request->get('answer');
 //        $result->save();
 //        return response()->json($result, 201);
+    }
+
+    public function saveAnswers(Request $request)
+    {
+//        return $request->get('data');
+//        $lastSection = $request->get('lastSection') ? 'Estamos en la ultimaa seccion' : 'Aun no estamos en la ultima seccion';
+        $lastSection = $request->get('lastSection');
+
+//        return response()->json($lastSection,201);
+
+        $userid = 2;
+        $survey = 2;
+
+        $answers = $request->get('data');
+
+        $firstQuestion = $answers[0]['question'];
+        $lastQuestion  = end($answers)['question'];
+
+
+        $results = Result::where('patient_id', $userid)->where('survey', $survey)->where('question', '>=', $firstQuestion )->where('question', '<=', $lastQuestion)->orderBy('question', 'ASC')->get();
+        // Cada elemento de $resultsInDB representa una pregunta que ya esta contestada en la base de datos
+        $resultsInDB = [];
+
+        foreach($results as $result){
+            array_push($resultsInDB, $result->question);
+        }
+
+//        return $resultsInDB;
+
+//        return $answers;
+        if(empty($resultsInDB)){
+            $m = 'Ninguna respuesta existia en la base de datos, todo se agrego correctamente';
+            foreach ($answers as $answer) {
+                if(!$answer['answered']){
+                    $r = new Result();
+                    $r->patient_id = $userid;
+                    $r->question = $answer['question'];
+                    $r->answer = $answer['answer'];
+                    $r->survey = $survey;
+                    $r->save();
+                }
+            }
+//            return response()->json(,201);
+
+        }else{
+            $m = 'Todas las respuestas enviadas ya existen en la base de datos, no se agrego nada nuevo';
+            foreach ($answers as $answer){
+                if(!in_array($answer['question'], $resultsInDB)){
+                    $r = new Result();
+                    $r->patient_id = $userid;
+                    $r->question = $answer['question'];
+                    $r->answer = $answer['answer'];
+                    $r->survey = $survey;
+                    $r->save();
+                    $m = 'Ya existian algunas respuestas, pero habian respuestas nuevas y han sido agregados a la base de datos';
+                }
+            }
+        }
+
+
+        if($lastSection){
+
+        }
+
+        return response()->json($m,201);
+
+
+
+//        throw new \Exception('Error magnetico');
     }
 
     public function login(Request $request)

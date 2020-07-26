@@ -39,6 +39,9 @@ Route::post('/me', 'PatientController@me');
 
 Route::get('/getpersonal', 'PatientController@getPersonal');
 Route::post('/saveanswer', 'PatientController@saveAnswer');
+
+Route::post('/saveanswers', 'PatientController@saveAnswers'); // Nuevo
+
 Route::get('/createsections', 'PatientController@createSections');
 
 Route::resource('/register', 'PatientRegisterController');
