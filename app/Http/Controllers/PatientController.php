@@ -319,9 +319,7 @@ class PatientController extends Controller
                     $csn= $pf->completed_surveys;
                     $pf->completed_surveys= $csn+1;
                     $pf->save();
-//                    return $pf;
                 }
-
             }
 
             return response()->json($result, 201);
@@ -367,6 +365,9 @@ class PatientController extends Controller
 //        return $resultsInDB;
 
 //        return $answers;
+
+
+
         if(empty($resultsInDB)){
             $m = 'Ninguna respuesta existia en la base de datos, todo se agrego correctamente';
             foreach ($answers as $answer) {
@@ -398,6 +399,15 @@ class PatientController extends Controller
 
 
         if($lastSection){
+            $sizeResults= Result::where('patient_id',$userid)->where('survey', $survey)->count();
+
+            if($sizeResults){
+                $user = Patient::find($userid);
+                $user->completed_surveys = $survey;
+                $user->survey_available = false;
+                $user->save();
+                return $user;
+            }
 
         }
 
