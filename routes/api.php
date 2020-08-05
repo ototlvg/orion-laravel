@@ -49,7 +49,7 @@ Route::resource('/register', 'PatientRegisterController');
 
 // Pruebas
 Route::get('/probe', 'PatientController@probe');
-Route::get('/newrecords', 'PatientController@newRecords');
+//Route::get('/newrecords', 'PatientController@newRecords');
 
 Route::group(['prefix' => 'admin'], function(){
 //    Route::get('crud', 'Admin\ResultsController@index')->name('results.index'); // El mw que comprueba si el usuario ya contesta la encuesto esta declarado en el Controller ANTES ERA POST
@@ -60,5 +60,7 @@ Route::group(['prefix' => 'admin'], function(){
     Route::get('mmpi/basica/{patient_id}/{survey}', 'Admin\PatientEvaluationController@basica');
     Route::get('mmpi/suplementaria/{patient_id}/{survey}', 'Admin\PatientEvaluationController@suplementaria');
     Route::get('mmpi/contenido/{patient_id}/{survey}', 'Admin\PatientEvaluationController@contenido');
+
+    Route::post('crud/teclado', 'Admin\PatientCRUDController@teclado');
 });
 

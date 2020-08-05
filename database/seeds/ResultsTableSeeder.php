@@ -13,8 +13,8 @@ class ResultsTableSeeder extends Seeder
      */
     public function run()
     {
-        $desde= 1;
-        $hasta= 20;
+        $desde= 2;
+        $hasta= 28;
 
         for ($i=$desde; $i<=$hasta; $i++){
 
@@ -24,8 +24,8 @@ class ResultsTableSeeder extends Seeder
                 $r->patient_id= $i;
                 $r->question= $j;
                 $r->survey=1;
-//                $r->answer= $faker->randomElement([0,1]);
-                $r->answer= 1;
+                $r->answer= $faker->randomElement([0,1]);
+//                $r->answer= 1;
                 $r->save();
             }
 

@@ -167,6 +167,7 @@ class PatientController extends Controller
         // y cuando el Patient este autorizado a contestar la encuesta
         $actualSurvey = $completedSurveys+1;
 
+
 //        $results= Result::orderBy('question', 'ASC')->where('patient_id', $userid)->get();
         $results= Result::select('question')->orderBy('question', 'ASC')->where('patient_id', $userid)->where('survey', $actualSurvey)->get();
 //        $results= Result::where('patient_id', $userid)->where('survey', 1)->get();

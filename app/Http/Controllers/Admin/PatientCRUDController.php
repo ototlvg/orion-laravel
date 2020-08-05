@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Result;
 use Illuminate\Http\Request;
 use App\Patient;
 
@@ -19,13 +20,20 @@ class PatientCRUDController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    var $paginationNumber=8;
+    var $paginationNumber=10;
 
     public function index()
     {
 //        return response()->json('Hola mundo');
-
+//        sleep(5);
         return Patient::paginate($this->paginationNumber);
+//        return Patient::orderBy('id', 'DESC')->paginate($this->paginationNumber);
+    }
+
+    public function search(Request $request)
+    {
+        $search= $request->get('search');
+        return Patient::where('name', 'LIKE' ,"%$search%")->orWhere('apaterno', 'LIKE' ,"%$search%")->orWhere('amaterno','LIKE',"%$search%")->paginate($this->paginationNumber);
     }
 
     /**
@@ -91,20 +99,13 @@ class PatientCRUDController extends Controller
      */
     public function destroy($id)
     {
-        //
-    }
+//        sleep(5);
 
-    public function search(Request $request)
-    {
-//        $search= Request::get('search');
-        $search= $request->get('search');
+        $patient = Patient::find($id)->delete();
+//        return $patient;
 
-//        $patients= Patient::where(function($query) use ($search){
-//            $query->where('name', 'LIKE' ,$search)->orWhere('apaterno', 'LIKE' ,$search)->orWhere('amaterno','LIKE',$search)->paginate(2);
-//        })->paginate(2);
-//        return $patients;
-
-        return Patient::where('name', 'LIKE' ,"%$search%")->orWhere('apaterno', 'LIKE' ,"%$search%")->orWhere('amaterno','LIKE',"%$search%")->paginate($this->paginationNumber);
+        $data = (object) ['message' => 'Usuario eliminado', 'patientid' => $id];
+        return response()->json($data, 201);
     }
 
     public function getFormData(Request $request)
@@ -121,25 +122,36 @@ class PatientCRUDController extends Controller
 
     public function reactivate(Request $request)
     {
-        $p= Patient::find($request->get('patient_id'));
-        $survey= ($p->completed_surveys)+1;
-        for ($i=1; $i<=567; $i++){
-            DB::table('results')->insertGetId(
-                [
-                    'patient_id' => $p->id,
-                    'question' => $i,
-                    'answer' => null,
-                    'survey' => $survey
-                ]
-            );
-        }
-        $p->survey_available=1;
+//        sleep(5);
+        $userid = $request->get('id');
+        $type = $request->get('type');
+        $message = $type == 'activate' ? 'Reactivada' : 'Desactivada';
 
-        if($p->save()){
-            return response()->json('Registros creados', 201);
-        }else{
-            return response()->json('Fallo', 500);
+        $p= Patient::find($userid);
+        $completedSurveys = $p->completed_surveys;
+        $actualSurvey = $completedSurveys == 0 ? 1 : $completedSurveys;
+
+        if($type == 'activate'){
+            $resultsCount = Result::where('patient_id', $userid)->where('survey', $actualSurvey)->count();
+            if($resultsCount != 567){
+                $data = (object) ['message' => 'El survey actual aun no se finaliza', 'patientid' => $userid, 'survey' => $actualSurvey];
+                return response()->json($data, 501);
+            }
+            $p->survey_available = 1;
+            $p->save();
+//            return response()->json('La encuesta se reactivo correctamente', 201);
         }
 
+
+        $data = (object) ['message' => $message, 'patientid' => $userid, 'survey' => $actualSurvey];
+        return response()->json($data, 201);
+
+//        return response()->json('Fallo', 500);
+    }
+
+    public function teclado(Request $request)
+    {
+        sleep(5);
+        return response()->json($request->name, 201);
     }
 }
