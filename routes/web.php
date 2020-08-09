@@ -19,6 +19,7 @@ Route::get('/energia', 'PruebaController@prueba');
 Route::get('/archivos', 'PruebaController@excelSubir');
 Route::post('/archivos', 'PruebaController@excel')->name('subir.excel');
 Route::get('/pdf', 'PruebaController@pdf');
+Route::get('/admin', 'SpaController@admin');
 Route::get('/{any}', 'SpaController@index')->where('any', '.*');
 
 //Route::get('coco', "");

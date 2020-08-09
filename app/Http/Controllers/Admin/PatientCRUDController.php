@@ -22,6 +22,14 @@ class PatientCRUDController extends Controller
      */
     var $paginationNumber=10;
 
+    public function __construct()
+    {
+        parent::__construct();
+        $this->middleware('checkCookie');
+        $this->middleware('checkAuth');
+    }
+
+
     public function index()
     {
 //        return response()->json('Hola mundo');
@@ -89,6 +97,19 @@ class PatientCRUDController extends Controller
     public function update(Request $request, $id)
     {
         //
+//        sleep(5);
+        $patient = Patient::find($id);
+        $data = $request->get('data');
+
+        $columns = ['name', 'apaterno', 'amaterno', 'gender', 'marital_status', 'birthday', 'job'];
+
+        foreach ($columns as $col){
+            $patient[$col] = $data[$col];
+        }
+
+        $patient->save();
+
+        return response()->json($patient, 201);
     }
 
     /**
@@ -135,7 +156,7 @@ class PatientCRUDController extends Controller
             $resultsCount = Result::where('patient_id', $userid)->where('survey', $actualSurvey)->count();
             if($resultsCount != 567){
                 $data = (object) ['message' => 'El survey actual aun no se finaliza', 'patientid' => $userid, 'survey' => $actualSurvey];
-                return response()->json($data, 501);
+                return response()->json($data, 409);
             }
             $p->survey_available = 1;
             $p->save();
@@ -151,7 +172,8 @@ class PatientCRUDController extends Controller
 
     public function teclado(Request $request)
     {
-        sleep(5);
-        return response()->json($request->name, 201);
+//        sleep(5);
+//        throw new \Exception('Error magnetico');
+        return response()->json('GHolasl;dk',501);
     }
 }

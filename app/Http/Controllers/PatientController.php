@@ -254,7 +254,7 @@ class PatientController extends Controller
         $surveyAvailable = $patient->survey_available;
 
         if($surveyAvailable == 0){
-            return response()->json('La encuesta no esta disponible',401);
+            return response()->json('La encuesta no esta disponible',409);
         }
 
         $questionsOfSurvey = Question::paginate($this->paginadoItems);
@@ -369,9 +369,9 @@ class PatientController extends Controller
         $patient = Patient::where('code', $code)->first();
         $surveyAvailable = $patient->survey_available;
 
-//        return response()->json('La encuesta no esta disponible',401);
+//        return response()->json('La encuesta no esta disponible',409);
         if($surveyAvailable == 0){
-            return response()->json('La encuesta no esta disponible',401);
+            return response()->json('La encuesta no esta disponible',409);
         }
 
         $userid = $patient->id;
@@ -470,29 +470,7 @@ class PatientController extends Controller
 
     public function probe(Request $request)
     {
-
-//        $pid= $request->get('pid');
-//        $x= Result::where('patient_id',$pid)->get();
-//        return $x->count();
-
-        $countRecords= Result::where('patient_id',14)->where('survey', 1)->get()->count();
-        return response()->json($countRecords, 201);
-//        if($countRecords != 567){
-//            return response()->json([3.3,3.3], 201);
-//        }
-
-//        for ($i=1; $i<=567; $i++){
-//            DB::table('results')->insertGetId(
-//                [
-//                    'patient_id' => 14,
-//                    'question' => $i,
-//                    'answer' => null,
-//                    'survey' => 1
-//                ]
-//            );
-//        }
-//
-//        return response()->json('Exito', 201);
+        return response()->json('Hola mundo', 201);
     }
 
     public function newRecords(Request $request)

@@ -17,6 +17,14 @@ use App\Interpretacion;
 class PatientEvaluationController extends Controller
 {
     var $results;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->middleware('checkCookie');
+        $this->middleware('checkAuth');
+    }
+
     private function verdadero($elargs){
 //        $elargs = func_get_args();
         if($elargs[0] == 0){
