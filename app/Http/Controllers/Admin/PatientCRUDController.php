@@ -34,8 +34,8 @@ class PatientCRUDController extends Controller
     {
 //        return response()->json('Hola mundo');
 //        sleep(5);
-        return Patient::paginate($this->paginationNumber);
-//        return Patient::orderBy('id', 'DESC')->paginate($this->paginationNumber);
+//        return Patient::paginate($this->paginationNumber);
+        return Patient::orderBy('id', 'DESC')->paginate($this->paginationNumber);
     }
 
     public function search(Request $request)

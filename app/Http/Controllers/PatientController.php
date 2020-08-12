@@ -143,6 +143,7 @@ class PatientController extends Controller
 
     public function getSections(Request $request)
     {
+//        return response()->json([1,1,0],201);
 //        $userid= 27;
 //        $user = auth('patient')->user(); // Esto ya funciona, recuerda poner el token en el Header no en el body
 //        return response()->json($user,201);
@@ -182,19 +183,32 @@ class PatientController extends Controller
 //        return $questionsAvailable;
         $statusSection = [];
 
-        if($results->isEmpty()){
-            for($i=0; $i<$this->paginadoItems; $i++){
-                array_push($statusSection, 0);
-            }
-            return response()->json($statusSection, 201);
-        }
-//        return $results;
+        // Nuevo Bug -  Originalmente este codigo estaba aqui
+//        if($results->isEmpty()){
+//            for($i=0; $i<$this->paginadoItems; $i++){
+//                array_push($statusSection, 0);
+//            }
+//            return response()->json($statusSection, 201);
+//        }
+
         $checkNumberOfSections = numberOfQuestions/$this->paginadoItems;
         $isInt= is_int($checkNumberOfSections); // Retorna true si es un numero entero
 
         $numberOfSections = 0;
         $numberOfSections = $isInt ? $checkNumberOfSections : ceil($checkNumberOfSections);
 //        return $numberOfSections;
+
+
+        // Nuevo Bug - Este codigo lo movi para aca
+        if($results->isEmpty()){
+            for($i=0; $i<$numberOfSections; $i++){
+                array_push($statusSection, 0);
+            }
+            return response()->json($statusSection, 201);
+        }
+        //
+
+
         $i=0;
         $section=1;
         $flagQuestion=0;

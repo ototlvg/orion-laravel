@@ -2,10 +2,10 @@
 
 namespace App\Imports;
 
-use App\Interpretacion;
+use App\Question;
 use Maatwebsite\Excel\Concerns\ToModel;
 
-class InterpretacionesImport implements ToModel
+class QuestionsImport implements ToModel
 {
     /**
     * @param array $row
@@ -14,10 +14,9 @@ class InterpretacionesImport implements ToModel
     */
     public function model(array $row)
     {
-        return new Interpretacion([
-            'escala'    => $row[1],
-            'nivel' => $row[2],
-            'interpretacion' => $row[3],
+        return new Question([
+            'question'    => $row[0],
+//            'nivel' => $row[2],
         ]);
     }
 }

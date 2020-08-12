@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\QuestionsImport;
 use App\Result;
 //use PDF;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
@@ -138,8 +139,8 @@ class PruebaController extends Controller
     public function excel(Request $request)
     {
 
-        $file= $request->file('file');
-        Excel::import(new ConversionesImport(), $file);
+//        $file= $request->file('file');
+//        Excel::import(new ConversionesImport(), $file);
 
 //        $file= $request->file('interpretaciones');
 //        Excel::import(new InterpretacionesImport(), $file);
@@ -149,6 +150,9 @@ class PruebaController extends Controller
 
 //        $file= $request->file('escalas');
 //        Excel::import(new EscalasImport, $file);
+
+        $file= $request->file('questions');
+        Excel::import(new QuestionsImport, $file);
 
 
 
@@ -184,5 +188,11 @@ class PruebaController extends Controller
         $pdf= PDF::loadView('welcome');
         $pdf->setOption('enable-javascript',true);
         return $pdf->stream('ds.pdf');
+    }
+
+
+    public function texto()
+    {
+        return response()->json('Electromagnetismo',201);
     }
 }

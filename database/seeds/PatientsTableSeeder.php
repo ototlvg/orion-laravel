@@ -13,7 +13,7 @@ class PatientsTableSeeder extends Seeder
      */
     public function run()
     {
-        for ($i=0; $i<20; $i++){
+        for ($i=0; $i<19; $i++){
             $faker = Factory::create();
             $p= new Patient;
 //            $p->code=$faker->ean13;

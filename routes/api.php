@@ -27,7 +27,7 @@ Route::post('/decrypt', 'PatientController@cryptProbe');
 //Route::post('/login', 'PatientController@login');
 
 //Route::get('/getsections', 'PatientController@getSections');
-Route::get('/getsections', 'PatientController@getSections')->middleware('checkPatientCookie');
+Route::get('/getsections', 'PatientController@getSections');
 
 Route::get('/getquestions', 'PatientController@getQuestions');
 Route::get('/getquestionsprime', 'PatientController@getQuestionsPrime');
@@ -46,6 +46,7 @@ Route::get('/createsections', 'PatientController@createSections');
 
 Route::resource('/register', 'PatientRegisterController');
 
+Route::get('/impresora', 'PruebaController@texto');
 
 // Pruebas
 Route::get('/probe', 'PatientController@probe');
