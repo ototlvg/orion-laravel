@@ -17,6 +17,14 @@ use App\Interpretacion;
 class PatientEvaluationController extends Controller
 {
     var $results;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->middleware('checkCookie');
+        $this->middleware('checkAuth');
+    }
+
     private function verdadero($elargs){
 //        $elargs = func_get_args();
         if($elargs[0] == 0){
@@ -64,7 +72,7 @@ class PatientEvaluationController extends Controller
 
     public function basica($patient_id,$survey)
     {
-//        $this->results= Result::where('patient_id',$patient_id)->get();
+//        sleep(5);
         $nullRow= Result::where('patient_id',$patient_id)->where('survey', $survey)->WhereNull('answer')->first();
 //        return empty($nullRow) ? 'Esta vacio' : 'No esta vacio';
         if(!empty($nullRow)){
@@ -332,6 +340,7 @@ class PatientEvaluationController extends Controller
 
     public function suplementaria($patient_id, $survey)
     {
+//        sleep(5);
         // OJO: el $nullRow solo detecta si hay un null, por lo que el survey si debe de existir, PERO esto solo detecta
         // si ya esta contestado o no, NO detecta si los registros del survey 2 por ejemplo existen
         $nullRow= Result::where('patient_id',$patient_id)->where('survey', $survey)->WhereNull('answer')->first();
@@ -631,6 +640,7 @@ class PatientEvaluationController extends Controller
 
     public function contenido($patient_id,$survey)
     {
+//        sleep(5);
         $nullRow= Result::where('patient_id',$patient_id)->where('survey', $survey)->WhereNull('answer')->first();
 //        return empty($nullRow) ? 'Esta vacio' : 'No esta vacio';
         if(!empty($nullRow)){

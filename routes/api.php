@@ -26,34 +26,46 @@ Route::post('/decrypt', 'PatientController@cryptProbe');
 
 //Route::post('/login', 'PatientController@login');
 
+//Route::get('/getsections', 'PatientController@getSections');
 Route::get('/getsections', 'PatientController@getSections');
-Route::get('/getsectionsprime', 'PatientController@getSectionsPrime');
 
 Route::get('/getquestions', 'PatientController@getQuestions');
 Route::get('/getquestionsprime', 'PatientController@getQuestionsPrime');
 
+Route::get('/getsectiondata', 'PatientController@getSectionData');
+
 Route::post('/login', 'PatientController@login');
-Route::post('/me', 'PatientController@me');
+
 
 Route::get('/getpersonal', 'PatientController@getPersonal');
 Route::post('/saveanswer', 'PatientController@saveAnswer');
+
+Route::post('/saveanswers', 'PatientController@saveAnswers'); // Nuevo
+
 Route::get('/createsections', 'PatientController@createSections');
 
 Route::resource('/register', 'PatientRegisterController');
 
+Route::get('/impresora', 'PruebaController@texto');
 
 // Pruebas
 Route::get('/probe', 'PatientController@probe');
-Route::get('/newrecords', 'PatientController@newRecords');
+//Route::get('/newrecords', 'PatientController@newRecords');
 
 Route::group(['prefix' => 'admin'], function(){
 //    Route::get('crud', 'Admin\ResultsController@index')->name('results.index'); // El mw que comprueba si el usuario ya contesta la encuesto esta declarado en el Controller ANTES ERA POST
     Route::get('crud/search', 'Admin\PatientCRUDController@search');
     Route::get('crud/getformdata', 'Admin\PatientCRUDController@getFormData');
     Route::post('crud/reactivate', 'Admin\PatientCRUDController@reactivate');
+
+    Route::post('login', 'Admin\AuthController@login');
+    Route::get('checkauth', 'Admin\AuthController@checkAuth');
+
     Route::resource('crud', 'Admin\PatientCRUDController');
     Route::get('mmpi/basica/{patient_id}/{survey}', 'Admin\PatientEvaluationController@basica');
     Route::get('mmpi/suplementaria/{patient_id}/{survey}', 'Admin\PatientEvaluationController@suplementaria');
     Route::get('mmpi/contenido/{patient_id}/{survey}', 'Admin\PatientEvaluationController@contenido');
+
+    Route::post('crud/teclado', 'Admin\PatientCRUDController@teclado');
 });
 
