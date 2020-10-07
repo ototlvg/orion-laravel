@@ -1,0 +1,45 @@
+"id";"escala";"nombre";"tipo"
+1;"L";"Mentira";1
+2;"F";"Infrecuencia";1
+3;"K";"Correccion";1
+4;"Hs";"Hipocondriasis";1
+5;"D";"Depresion";1
+6;"Hi";"Histeria";1
+7;"Dp";"Desviacion psicotica";1
+8;"Mf";"Masculino-femeneidad";1
+9;"Pa";"Paranoia";1
+10;"Pt";"Psicastenia";1
+11;"Es";"Esquizofrenia";1
+12;"Ma";"Hipomania";1
+13;"Is";"Introversion social";1
+14;"A";"Ansiedad";2
+15;"R";"Represion";2
+16;"Fyo";"Fuerza del yo";2
+17;"A-MAC";"Alcoholismo de MacAndrew revisada";2
+18;"Fp";"Infrecuencia posterior";2
+19;"HR";"Hostilidad reprimida";2
+20;"Do";"Dominancia";2
+21;"Rs";"Responsabilidad social";2
+22;"Dpr";"Desajuste profesional";2
+23;"GM";"Genero Masculino";2
+24;"GF";"Genero femenino";2
+25;"EPK";"Desorden de estres postraumatico de Keane";2
+26;"EPS";"Desorden de estres postraumatico de Schelenger";2
+27;"Is1";"Timidez/inhibicion";2
+28;"Is2";"Evitacion social";2
+29;"Is3";"Alineacion - si mismo y otros";2
+30;"ANS";"Ansiedad";3
+31;"MIE";"Miedos";3
+32;"OBS";"Obsesividad";3
+33;"DEP";"Depresion";3
+34;"SAU";"Preocupacion por la salud";3
+35;"DEL";"Pensamiento delirante";3
+36;"ENJ";"Enojo";3
+37;"CIN";"Cinismo";3
+38;"PAS";"Practicas antisociales";3
+39;"PTA";"Personalidad tipo A";3
+40;"BAE";"Baja autoestima";3
+41;"ISO";"Incomodidad social";3
+42;"FAM";"Problemas familiares";3
+43;"DTR";"Dificultad en el trabajo";3
+44;"RTR";"Rechazo al tratamiento";3
