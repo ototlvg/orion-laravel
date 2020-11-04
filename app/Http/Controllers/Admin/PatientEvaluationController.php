@@ -21,6 +21,7 @@ class PatientEvaluationController extends Controller
     public function __construct()
     {
         parent::__construct();
+
         $this->middleware('checkCookie');
         $this->middleware('checkAuth');
     }
@@ -80,7 +81,7 @@ class PatientEvaluationController extends Controller
         }
         $this->results= Result::where('patient_id',$patient_id)->where('survey',$survey)->get();
 //        return $this->results;
-        $sexo= Patient::find($patient_id)->gender==1 ? true:false; // $sexo==1 -> Masculino     $sexo==2 ->Femenino
+        $sexo= Patient::find($patient_id)->gender==1; // $sexo==1 -> Masculino     $sexo==2 ->Femenino
         $escalas = array (
             // -------- Escalas de Validez
             // L - Mentira 1
