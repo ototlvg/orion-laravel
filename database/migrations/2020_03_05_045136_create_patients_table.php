@@ -26,6 +26,10 @@ class CreatePatientsTable extends Migration
             $table->date('birthday');
             $table->unsignedBigInteger('job');
             $table->foreign('job')->references('id')->on('job_titles')->onDelete('cascade');
+
+            $table->unsignedBigInteger('escolaridad');
+            $table->foreign('escolaridad')->references('id')->on('escolaridades')->onDelete('cascade');
+
             $table->string('email')->unique()->nullable();
 //            $table->string('password')->nullable();
             $table->unsignedBigInteger('type');

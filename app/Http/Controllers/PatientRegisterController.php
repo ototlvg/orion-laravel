@@ -8,6 +8,7 @@ use App\Marital;
 use App\Gender;
 use App\CustomClass\Data;
 use App\Patient;
+use App\Escolaridad;
 use Faker\Factory as Factory;
 use Illuminate\Support\Facades\DB;
 
@@ -23,10 +24,12 @@ class PatientRegisterController extends Controller
         $jobs= Job::all();
         $genders= Gender::all();
         $marital= Marital::all();
+        $escolaridades =  Escolaridad::all();
         $data= new Data();
         $data->setJobs($jobs);
         $data->setGenders($genders);
         $data->setMarital($marital);
+        $data->setEscolaridades($escolaridades);
         return response()->json($data, 201);
     }
 
@@ -58,6 +61,7 @@ class PatientRegisterController extends Controller
             'marital' => 'required|max:255',
             'birthday' => 'required|max:255',
             'job' => 'required|max:255',
+            'escolaridad' => 'required|max:255',
             'email' => 'nullable|max:255|email|unique:patients,email',
         ]);
 
@@ -70,6 +74,7 @@ class PatientRegisterController extends Controller
         $p->marital_status= $request->get('marital');
         $p->birthday= $request->get('birthday');
         $p->job= $request->get('job');
+        $p->escolaridad= $request->get('escolaridad');
         $p->email= $request->get('email');
         $p->type= 1;
         $p->save();

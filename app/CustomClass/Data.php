@@ -7,7 +7,7 @@ class Data{
     var $genders;
     var $marital;
     var $jobs;
-
+    var $escolaridades;
 
     public function setGenders($genders)
     {
@@ -22,6 +22,11 @@ class Data{
     public function setJobs($jobs)
     {
         $this->jobs= $jobs;
+    }
+
+    public function setEscolaridades($escolaridades)
+    {
+        $this->escolaridades= $escolaridades;
     }
 
     public function get()
