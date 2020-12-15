@@ -19,7 +19,7 @@
   <head>
     <meta charset=utf-8>
     <meta name=viewport content="width=device-width,initial-scale=1">
-    <title>Orion</title>
+    <title>SEPPTE</title>
   <link href=/static/css/patient.90f1ae82946e9283922f444723ea7430.css rel=stylesheet></head>
   <body>
     <div id=app></div>

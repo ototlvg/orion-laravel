@@ -3,7 +3,7 @@
   <head>
     <meta charset=utf-8>
     <meta name=viewport content="width=device-width,initial-scale=1">
-    <title>Orion | Admin</title>
+    <title>SEPPTE | Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel=stylesheet> 
   <link href=/static/css/admin.da9918da39740654b09bda3a7e889534.css rel=stylesheet></head>
   <body>
