@@ -10,7 +10,7 @@
     <div id=app></div>
 
     <script>
-        window.baseURL = 'http://uabc-mmpi2.westus2.cloudapp.azure.com/api/admin'
+        window.baseURL = 'http://orion.local.com/api/admin'
     </script>
     
     <script type=text/javascript src=/static/js/admin.52b0a4103ff483666323.js></script><script type=text/javascript src=/static/js/admin.a5313c8c370071e15d4a.js></script><script type=text/javascript src=/static/js/admin.8a204c8f5de8ea4acfbe.js></script></body>

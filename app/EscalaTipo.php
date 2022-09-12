@@ -4,8 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Nivel extends Model
+class EscalaTipo extends Model
 {
-    protected $table= "niveles";
+    protected $table = 'escalas_tipos';
     public $timestamps = false;
 }
