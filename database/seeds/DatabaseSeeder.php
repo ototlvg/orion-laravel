@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
 
         // Seeders para crear 3 usuarios (se pueden crear mas, solo falta modificar un poco el codigo) 
         // de prueba con sus respectivas encuestas YA RESUELTAS.
-        $this->call(PatientsTableSeeder::class);
-        $this->call(ResultsTableSeeder::class);
+        // $this->call(PatientsTableSeeder::class);
+        // $this->call(ResultsTableSeeder::class);
     }
 }
