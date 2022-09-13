@@ -11,7 +11,7 @@ class AuthController extends Controller
     public function __construct()
     {
         parent::__construct();
-        // $this->middleware('checkCookie')->except('login');
+        $this->middleware('checkCookie')->except('login');
     }
 
     public function login()
